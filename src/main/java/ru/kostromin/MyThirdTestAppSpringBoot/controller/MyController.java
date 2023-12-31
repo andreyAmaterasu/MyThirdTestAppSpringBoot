@@ -1,6 +1,9 @@
 package ru.kostromin.MyThirdTestAppSpringBoot.controller;
 
 import jakarta.validation.Valid;
+import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -18,6 +21,7 @@ import ru.kostromin.MyThirdTestAppSpringBoot.model.Request;
 import ru.kostromin.MyThirdTestAppSpringBoot.model.Response;
 import ru.kostromin.MyThirdTestAppSpringBoot.service.ModifyResponseService;
 import ru.kostromin.MyThirdTestAppSpringBoot.service.ValidationService;
+import ru.kostromin.MyThirdTestAppSpringBoot.util.DateTimeUtil;
 
 @Slf4j
 @RestController
@@ -36,9 +40,13 @@ public class MyController {
 
   @PostMapping(value = "/feedback")
   public ResponseEntity<Response> feedback(
-      @Valid @RequestBody Request request, BindingResult bindingResult) {
+      @Valid @RequestBody Request request, BindingResult bindingResult) throws ParseException {
 
     log.info("request: {}", request);
+
+    Date firstServiceSystemTime = DateTimeUtil.getCustomFormat().parse(request.getSystemTime());
+    log.info("Прошло миллисекунд между получением запросов: " +
+        (new Date().getTime() - firstServiceSystemTime.getTime()));
 
     Response response = Response.builder()
         .uid(request.getUid())
